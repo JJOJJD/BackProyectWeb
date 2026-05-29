@@ -59,6 +59,12 @@ export class UserController {
   public async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
+
+      if (!email || !password) {
+        res.status(400).json({ success: false, message: 'Email and password are required' });
+        return;
+      }
+
       const user = await this.userService.getLoginUser(email);
       
       if (!user || user.password !== password) {
@@ -71,6 +77,7 @@ export class UserController {
       
       res.status(200).json({ success: true, data: userWithoutPassword });
     } catch (error) {
+      console.error('Login controller error:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
     }
   }
